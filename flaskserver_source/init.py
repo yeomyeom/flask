@@ -71,6 +71,7 @@ def loading():
     
 def title_content_check(texts):
     # 1
+    content = texts
     full_content = texts
     # 2
     try:
@@ -118,7 +119,7 @@ def title_content_check(texts):
 # 1.content.txt 내용을 content 변수에 단일 스트링형식으로 담는다.
 # 2.제목이 있을만한 쪽을 추출해낸다
 # 3.주제 연관도에 쓸 명사 토큰만 추출
-def tag_content_check(texts):
+def tag_content_check(texts, taglist):
     # 1
 
     full_content = texts
@@ -126,7 +127,7 @@ def tag_content_check(texts):
     # 2
     #halfContentLen: content 스트링의 길이/2 저장
     #ContentLen: content 스트링의 길이 저장
-
+    ''' 
     halfContentLen = round(len(contentForTag)/2)
     contentLen = len(contentForTag)
 
@@ -145,7 +146,9 @@ def tag_content_check(texts):
         else:
             #print(j[0])
             tags.append(j[1])
-    #print(tags)
+    print(tags)
+    '''
+    tags = taglist
     okt = Okt()
     tags_string =''
     for z in tags:
@@ -160,7 +163,8 @@ def tag_content_check(texts):
         #print(temp)
         useful_word_count += temp
     #print('태그 단어 수',len(tags_konl))
-    print("tag:" + tags_string)
+    print("tag:")
+    print(tags_konl)
     return round( useful_word_count/len(full_content_temp.split()),3)
 
 # sticker.txt에서 광고성 스티커와 비광고성 스티커의 비율을 구해 출력한다(double형)
@@ -274,7 +278,7 @@ def categorizing(texts):
     #출력값 3: it
     #출력값 2: 맛집
 
-def sendVal(texts, pics, stickers):
+def sendVal(texts, pics, stickers, taglist):
     # 0. 카테고리 정하기
     categNum = categorizing(texts)
 
@@ -345,7 +349,7 @@ def sendVal(texts, pics, stickers):
 
     # 5. float형 소수점 3자리
     # 빨:0.06 이상  초:0.004이하
-    tagValue = tag_content_check(texts)
+    tagValue = tag_content_check(texts, taglist)
     #print("태그-본문연관성: ", tagValue)
     #tagColor = 0
     '''
@@ -392,11 +396,14 @@ def template_test(url):
     now = datetime.datetime.now()
     start = time.time()
     url = "https://blog.naver.com/PostView.nhn?" + url
-    pics, stickers, texts, text = [],[],[],[]  # arrays of pic, sticker, text.
+    pics, stickers, texts, text, taglist = [],[],[],[],[]  # arrays of pic, sticker, text 
     html = web_parse(url)
     pics += re.findall('<img.*?src="(.*?)".*?>', html) #parse pics number
     stickers += re.findall('<img.*? src="(.*?)".*?class="se-sticker-image" />',html)  #parse sticker number
     text += re.findall('<span.*?>(.*?)</span>',html) #parse text
+    taglist += re.findall('<span class="__se-hash-tag">#(.*?)</span>', html)
+    print("tag list")
+    print(taglist)
     for parse in text:
         texts += re.findall("[가-힝# ]",parse)
     text = "".join(texts)
@@ -405,7 +412,7 @@ def template_test(url):
     #result = " ".join(texts)
     #파싱된 파일들을 가지고 점수 출력
     models = mlmodel(texts)
-    categnum, emotion, link, sticker, tag, title = sendVal(text,pics,stickers)
+    categnum, emotion, link, sticker, tag, title = sendVal(text,pics,stickers,taglist)
     #text는 문자열, pics 리스트, stickers 리스트
     #categNum, advPosiNega, 0, advImgList , advStickerList, tagValue, titleValue
     result ={
