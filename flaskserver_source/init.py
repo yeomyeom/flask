@@ -85,7 +85,6 @@ def title_content_check(texts):
         okt = Okt()
         tag_token_list = okt.nouns(content)
 
-    print("Title : " + content)
 
     # 3
     #konlpy 처리
@@ -103,7 +102,8 @@ def title_content_check(texts):
         title_used += temp
     #print('제목 단어 수',len(title_token_list))
 
-
+    print("Title : ")
+    print(title_token_list)
     # 6 출력
     # 제목단어 사용률/전체 단어
 
@@ -145,8 +145,7 @@ def tag_content_check(texts):
         else:
             #print(j[0])
             tags.append(j[1])
-    print("tag:")
-    print(tags)
+    #print(tags)
     okt = Okt()
     tags_string =''
     for z in tags:
@@ -161,6 +160,7 @@ def tag_content_check(texts):
         #print(temp)
         useful_word_count += temp
     #print('태그 단어 수',len(tags_konl))
+    print("tag:" + tags_string)
     return round( useful_word_count/len(full_content_temp.split()),3)
 
 # sticker.txt에서 광고성 스티커와 비광고성 스티커의 비율을 구해 출력한다(double형)
@@ -188,7 +188,8 @@ def advStickerRatio(stickers):
         if( j in userStickerString):
             #nonAdvNum += 1
             result.append(j)
-
+    print("sticker urls")
+    print(result)
     #if(nonAdvNum == 0): return advNum * -1
     #else: return advNum/nonAdvNum
     return result
@@ -233,6 +234,7 @@ def advImageChecking(pics):
     for k in newUIU2:
         for l in advImageList:
             if(k in l): result.append(k)
+    print("img url: ")
     print(result)
     #2
     #okt = Okt()
